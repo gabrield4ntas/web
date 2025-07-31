@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             li.innerHTML = `
                 <span>${tarefa.nome}</span>
                 <div>
+                    <button class="btn btn-sm btn-warning me-2 botao-editar" data-indice="${indice}">Editar</button>
                     <button class="btn btn-sm btn-danger botao-remover" data-indice="${indice}">Remover</button>
                 </div>
             `;
@@ -40,6 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".botao-remover").forEach((botao) => {
             // Quando clicar no botão, remove a tarefa correspondente
             botao.addEventListener("click", () => removerTarefa(botao.dataset.indice));
+        });
+        document.querySelectorAll(".botao-editar").forEach((botao) => {
+            botao.addEventListener("click", () => editarTarefa(botao.dataset.indice));
         });
     };
 
@@ -70,4 +74,15 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Por favor, digite uma tarefa!");
         }
     });
+    const editarTarefa = (indice) => {
+        const tarefaAtual = tarefas[indice];
+        const novoNome = prompt("Edite o nome da tarefa:", tarefaAtual.nome);
+
+        if (novoNome !== null && novoNome.trim() !== "") {
+                tarefaAtual.nome = novoNome.trim();
+                renderizarTarefas();
+        } else {
+            alert("O nome da tarefa não pode ser vazio.");
+        }
+    };
 });
