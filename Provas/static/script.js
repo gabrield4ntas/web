@@ -1,108 +1,99 @@
-let tarefas = [];
-let filtroAtual = 'Total';
+let listaTarefas = [];
+let filtroAtivo = 'Total';
 
 document.addEventListener("DOMContentLoaded", () => {
-  atualizarLista();
+  atualizarListaDeTarefas();
 });
 
 function adicionarTarefa() {
-  const input = document.getElementById("entradaTarefa");
-  const texto = input.value.trim();
+  const inputTarefa = document.getElementById("entradaTarefa");
+  const textoTarefa = inputTarefa.value.trim();
 
-  if (txt === "") {
+  if (textoTarefa === "") {
     alert("Digite uma tarefa!");
     return;
   }
 
-  tarefas.push({
-    txt: txt,
+  listaTarefas.push({
+    textoTarefa: textoTarefa,
     concluida: false
   });
 
-  input.value = "";
-  atualizarLista();
+  inputTarefa.value = "";
+  atualizarListaDeTarefas();
 }
 
-function atualizarLista() {
-  const lista = document.getElementById("listaTarefas");
-  lista.innerHTML = "";
+function atualizarListaDeTarefas() {
+  const listaElemento = document.getElementById("listaTarefas");
+  listaElemento.innerHTML = "";
 
-  tarefas
+  listaTarefas
     .filter(tarefa => {
-      if (filtroAtual === 'Total') return true;
-      if (filtroAtual === 'pendentes') return !tarefa.concluida;
-      if (filtroAtual === 'concluidas') return tarefa.concluida;
+      if (filtroAtivo === 'Total') return true;
+      if (filtroAtivo === 'pendentes') return !tarefa.concluida;
+      if (filtroAtivo === 'concluidas') return tarefa.concluida;
     })
-    .forEach((tarefa, index) => {
-      const li = document.createElement("li");
-      li.className = "list-group-item d-flex justify-content-between align-items-center fade-in";
+    .forEach((tarefa, indice) => {
+      const itemLista = document.createElement("li");
+      itemLista.className = "list-group-item d-flex justify-content-between align-items-center fade-in";
 
       const divEsquerda = document.createElement("div");
       divEsquerda.className = "d-flex align-items-center";
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.className = "form-check-input me-2";
-      checkbox.checked = tarefa.concluida;
-      checkbox.addEventListener("change", () => {
-        tarefa.concluida = checkbox.checked;
-        atualizarLista();
-      });
+      // Removido o checkbox
+      const textoElemento = document.createElement("span");
+      textoElemento.textContent = tarefa.textoTarefa;
+      if (tarefa.concluida) textoElemento.classList.add("concluida");
 
-      const span = document.createElement("span");
-      span.textContent = tarefa.texto;
-      if (tarefa.concluida) span.classList.add("concluida");
-
-      divEsquerda.appendChild(checkbox);
-      divEsquerda.appendChild(span);
+      divEsquerda.appendChild(textoElemento);
 
       const divBotoes = document.createElement("div");
 
-      const btnEditar = document.createElement("button");
-      btnEditar.textContent = "Editar";
-      btnEditar.className = "btn btn-warning btn-sm me-2";
-      btnEditar.onclick = () => editarTarefa(index);
+      const btnEditarTarefa = document.createElement("button");
+      btnEditarTarefa.textContent = "Editar";
+      btnEditarTarefa.className = "btn btn-warning btn-sm me-2";
+      btnEditarTarefa.onclick = () => editarTarefa(indice);
 
-      const btnRemover = document.createElement("button");
-      btnRemover.textContent = "Remover";
-      btnRemover.className = "btn btn-danger btn-sm";
-      btnRemover.onclick = () => removerTarefa(index, li);
+      const btnRemoverTarefa = document.createElement("button");
+      btnRemoverTarefa.textContent = "Remover";
+      btnRemoverTarefa.className = "btn btn-danger btn-sm";
+      btnRemoverTarefa.onclick = () => removerTarefa(indice, itemLista);
 
       if (tarefa.concluida) {
-        btnEditar.disabled = true;
-        btnEditar.classList.add("btn-secondary");
-        btnEditar.classList.remove("btn-warning");
+        btnEditarTarefa.disabled = true;
+        btnEditarTarefa.classList.add("btn-secondary");
+        btnEditarTarefa.classList.remove("btn-warning");
 
-        btnRemover.disabled = true;
-        btnRemover.classList.add("btn-secondary");
-        btnRemover.classList.remove("btn-danger");
+        btnRemoverTarefa.disabled = true;
+        btnRemoverTarefa.classList.add("btn-secondary");
+        btnRemoverTarefa.classList.remove("btn-danger");
       }
 
-      divBotoes.appendChild(btnEditar);
-      divBotoes.appendChild(btnRemover);
+      divBotoes.appendChild(btnEditarTarefa);
+      divBotoes.appendChild(btnRemoverTarefa);
 
-      li.appendChild(divEsquerda);
-      li.appendChild(divBotoes);
+      itemLista.appendChild(divEsquerda);
+      itemLista.appendChild(divBotoes);
 
-      lista.appendChild(li);
+      listaElemento.appendChild(itemLista);
     });
 
   document.querySelectorAll('.filtros .btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelector(`.filtros .btn[onclick*="${filtroAtual}"]`)?.classList.add('active');
+  document.querySelector(`.filtros .btn[onclick*="${filtroAtivo}"]`)?.classList.add('active');
 }
 
-function editarTarefa(index) {
-  const novoTexto = prompt("Edite a tarefa:", tarefas[index].txt);
+function editarTarefa(indice) {
+  const novoTexto = prompt("Edite a tarefa:", listaTarefas[indice].textoTarefa);
   if (novoTexto && novoTexto.trim() !== "") {
-    tarefas[index].txt = novoTexto.trim();
-    atualizarLista();
+    listaTarefas[indice].textoTarefa = novoTexto.trim();
+    atualizarListaDeTarefas();
   }
 }
 
-function removerTarefa(index, elemento) {
+function removerTarefa(indice, elemento) {
   elemento.classList.add("fade-out");
   setTimeout(() => {
-    tarefas.splice(index, 1);
-    atualizarLista();
+    listaTarefas.splice(indice, 1);
+    atualizarListaDeTarefas();
   }, 300);
 }
