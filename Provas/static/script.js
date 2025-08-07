@@ -33,43 +33,46 @@ function atualizarListaDeTarefas() {
       if (filtroAtivo === 'pendentes') return !tarefa.concluida;
       if (filtroAtivo === 'concluidas') return tarefa.concluida;
     })
-    .forEach((tarefa, indice) => {
+    .forEach((tarefa, index) => {
       const itemLista = document.createElement("li");
       itemLista.className = "list-group-item d-flex justify-content-between align-items-center fade-in";
 
       const divEsquerda = document.createElement("div");
       divEsquerda.className = "d-flex align-items-center";
 
-      // Removido o checkbox
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "form-check-input me-2";
+      checkbox.checked = tarefa.concluida;
+      checkbox.addEventListener("change", () => {
+        tarefa.concluida = checkbox.checked;
+        atualizarListaDeTarefas();
+      });
+
       const textoElemento = document.createElement("span");
       textoElemento.textContent = tarefa.textoTarefa;
       if (tarefa.concluida) textoElemento.classList.add("concluida");
 
+      divEsquerda.appendChild(checkbox);
       divEsquerda.appendChild(textoElemento);
 
       const divBotoes = document.createElement("div");
 
-      const btnEditarTarefa = document.createElement("button");
-      btnEditarTarefa.textContent = "Editar";
-      btnEditarTarefa.className = "btn btn-warning btn-sm me-2";
-      btnEditarTarefa.onclick = () => editarTarefa(indice);
+  
 
       const btnRemoverTarefa = document.createElement("button");
       btnRemoverTarefa.textContent = "Remover";
       btnRemoverTarefa.className = "btn btn-danger btn-sm";
-      btnRemoverTarefa.onclick = () => removerTarefa(indice, itemLista);
+      btnRemoverTarefa.onclick = () => removerTarefa(index, itemLista);
 
       if (tarefa.concluida) {
-        btnEditarTarefa.disabled = true;
-        btnEditarTarefa.classList.add("btn-secondary");
-        btnEditarTarefa.classList.remove("btn-warning");
-
+  
         btnRemoverTarefa.disabled = true;
         btnRemoverTarefa.classList.add("btn-secondary");
         btnRemoverTarefa.classList.remove("btn-danger");
       }
 
-      divBotoes.appendChild(btnEditarTarefa);
+
       divBotoes.appendChild(btnRemoverTarefa);
 
       itemLista.appendChild(divEsquerda);
@@ -82,18 +85,11 @@ function atualizarListaDeTarefas() {
   document.querySelector(`.filtros .btn[onclick*="${filtroAtivo}"]`)?.classList.add('active');
 }
 
-function editarTarefa(indice) {
-  const novoTexto = prompt("Edite a tarefa:", listaTarefas[indice].textoTarefa);
-  if (novoTexto && novoTexto.trim() !== "") {
-    listaTarefas[indice].textoTarefa = novoTexto.trim();
-    atualizarListaDeTarefas();
-  }
-}
 
-function removerTarefa(indice, elemento) {
+function removerTarefa(index, elemento) {
   elemento.classList.add("fade-out");
   setTimeout(() => {
-    listaTarefas.splice(indice, 1);
+    listaTarefas.splice(index, 1);
     atualizarListaDeTarefas();
   }, 300);
 }
